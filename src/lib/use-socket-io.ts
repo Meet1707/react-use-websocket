@@ -47,6 +47,7 @@ export const useSocketIO = <T = unknown>(
   }), [])
 
   const {
+    clearQueue,
     sendMessage,
     sendJsonMessage,
     lastMessage,
@@ -63,6 +64,7 @@ export const useSocketIO = <T = unknown>(
     getSocketData<T>(lastMessage), [lastMessage]);
 
   return {
+    clearQueue,
     sendMessage,
     sendJsonMessage,
     lastMessage: socketIOLastMessage,

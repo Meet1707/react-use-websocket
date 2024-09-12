@@ -60,6 +60,7 @@ export type Subscriber<T = WebSocketEventMap['message']> = {
 }
 
 export type WebSocketHook<T = unknown, P = WebSocketEventMap['message'] | null> = {
+  clearQueue: () => void
   sendMessage: SendMessage,
   sendJsonMessage: SendJsonMessage,
   lastMessage: P,
@@ -70,7 +71,7 @@ export type WebSocketHook<T = unknown, P = WebSocketEventMap['message'] | null> 
 
 export type EventSourceHook = Omit<
   WebSocketHook<EventSourceEventMap['message']>,
-  'sendMessage' | 'sendJsonMessage' | 'lastMessage' | 'lastJsonMessage' | 'getWebSocket'
+  'sendMessage' | 'sendJsonMessage' | 'lastMessage' | 'lastJsonMessage' | 'getWebSocket' | 'clearQueue'
 > & {
   lastEvent: EventSourceEventMap['message'] | null,
   getEventSource: () => (WebSocketLike | null),

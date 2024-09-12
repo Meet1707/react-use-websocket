@@ -163,7 +163,12 @@ export const useWebSocket = <T = unknown>(
     }
   }, [readyStateFromUrl]);
 
+  const clearQueue = useCallback(() => {
+    messageQueue.current = [];
+  },[]);
+
   return {
+    clearQueue,
     sendMessage,
     sendJsonMessage,
     lastMessage,

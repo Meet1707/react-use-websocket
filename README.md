@@ -1,5 +1,7 @@
 # React useWebSocket
 
+# Fork from [robtaussig/react-use-websocket](https://github.com/robtaussig/react-use-websocket) to clear the message queue
+
 [Live Demo](https://robtaussig.com/socket/)
 
 Note: `wss://demos.kaazing.com/echo` has been down lately, so the demo will fail to connect when using that as the endpoint. On the plus side, this demonstrates the behavior of a connection failure.
@@ -32,13 +34,14 @@ yarn add react-use-websocket@3.0.0
 ## Example Implementation
 
 ```js
-import React, { useState, useCallback, useEffect } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import React, { useState, useCallback, useEffect } from "react";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
 export const WebSocketDemo = () => {
   //Public API that will echo messages sent to it back to the client
-  const [socketUrl, setSocketUrl] = useState('wss://echo.websocket.org');
-  const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
+  const [socketUrl, setSocketUrl] = useState("wss://echo.websocket.org");
+  const [messageHistory, setMessageHistory] =
+    useState < MessageEvent < any > [] > [];
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
@@ -49,18 +52,18 @@ export const WebSocketDemo = () => {
   }, [lastMessage]);
 
   const handleClickChangeSocketUrl = useCallback(
-    () => setSocketUrl('wss://demos.kaazing.com/echo'),
+    () => setSocketUrl("wss://demos.kaazing.com/echo"),
     []
   );
 
-  const handleClickSendMessage = useCallback(() => sendMessage('Hello'), []);
+  const handleClickSendMessage = useCallback(() => sendMessage("Hello"), []);
 
   const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    [ReadyState.CONNECTING]: "Connecting",
+    [ReadyState.OPEN]: "Open",
+    [ReadyState.CLOSING]: "Closing",
+    [ReadyState.CLOSED]: "Closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
   return (
@@ -108,12 +111,12 @@ npm install react-use-websocket
 ```
 
 ```js
-import useWebSocket from 'react-use-websocket';
+import useWebSocket from "react-use-websocket";
 
 // In functional React component
 
 // This can also be an async getter function. See notes below on Async Urls.
-const socketUrl = 'wss://echo.websocket.org';
+const socketUrl = "wss://echo.websocket.org";
 
 const {
   sendMessage,
@@ -123,7 +126,7 @@ const {
   readyState,
   getWebSocket,
 } = useWebSocket(socketUrl, {
-  onOpen: () => console.log('opened'),
+  onOpen: () => console.log("opened"),
   //Will attempt to reconnect on all close events, such as server shutting down
   shouldReconnect: (closeEvent) => true,
 });
@@ -160,6 +163,8 @@ type UseWebSocket<T = unknown> = (
   } = {},
   shouldConnect: boolean = true,
 ): {
+  // clears message queue
+  clearQueue: () => void,
   sendMessage: (message: string, keep: boolean = true) => void,
   //jsonMessage must be JSON-parsable
   sendJsonMessage: (jsonMessage: T, keep: boolean = true) => void,
@@ -184,13 +189,13 @@ type UseWebSocket<T = unknown> = (
 Instead of passing a string as the first argument to useWebSocket, you can pass a function that returns a string (or a promise that resolves to a string). It's important to note, however, that other rules still apply -- namely, that if the function reference changes, then it will be called again, potentially instantiating a new WebSocket if the returned url changes.
 
 ```js
-import useWebSocket from 'react-use-websocket';
+import useWebSocket from "react-use-websocket";
 
 // In functional React component
 const getSocketUrl = useCallback(() => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve('wss://echo.websocket.org');
+      resolve("wss://echo.websocket.org");
     }, 2000);
   });
 }, []);
@@ -224,7 +229,7 @@ Message will first be passed through `JSON.stringify`.
 ### lastMessage
 
 ```ts
-type lastMessage = WebSocketEventMap['message'];
+type lastMessage = WebSocketEventMap["message"];
 ```
 
 Will be an unparsed `MessageEvent` received from the WebSocket.
@@ -261,7 +266,7 @@ If the WebSocket is shared, calling this function will lazily instantiate a `Pro
 
 ```js
 const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket(
-  'wss://echo.websocket.org',
+  "wss://echo.websocket.org",
   { share: true }
 );
 
@@ -270,7 +275,7 @@ useEffect(() => {
   //=> 'blob'
 
   //Change binaryType property of WebSocket
-  getWebSocket().binaryType = 'arraybuffer';
+  getWebSocket().binaryType = "arraybuffer";
 
   console.log(getWebSocket().binaryType);
   //=> 'arraybuffer'
@@ -280,12 +285,12 @@ useEffect(() => {
   //=> A warning is logged to console: 'The WebSocket's event handlers should be defined through the options object passed into useWebSocket.'
 
   //Attempt to change an immutable property
-  getWebSocket().url = 'www.google.com';
+  getWebSocket().url = "www.google.com";
   console.log(getWebSocket().url);
   //=> 'wss://echo.websocket.org'
 
   //Attempt to call webSocket#send
-  getWebSocket().send('Hello from WebSocket');
+  getWebSocket().send("Hello from WebSocket");
   //=> No message is sent, and no error thrown (a no-op function was returned), but an error will be logged to console: 'Calling methods directly on the WebSocket is not supported at this moment. You must use the methods returned by useWebSocket.'
 }, []);
 ```
@@ -300,7 +305,7 @@ By default, `useWebSocket` will not attempt to reconnect to a WebSocket. This be
 const didUnmount = useRef(false);
 
 const [sendMessage, lastMessage, readyState] = useWebSocket(
-  'wss://echo.websocket.org',
+  "wss://echo.websocket.org",
   {
     shouldReconnect: (closeEvent) => {
       /*
@@ -325,7 +330,7 @@ Alternatively, you can provide a function for `Options#reconnectInterval` that a
 
 ```js
 const [sendMessage, lastMessage, readyState] = useWebSocket(
-  'wss://echo.websocket.org',
+  "wss://echo.websocket.org",
   {
     shouldReconnect: (closeEvent) => true,
     reconnectAttempts: 10,
@@ -341,15 +346,15 @@ const [sendMessage, lastMessage, readyState] = useWebSocket(
 ```ts
 interface Options {
   share?: boolean;
-  shouldReconnect?: (event: WebSocketEventMap['close']) => boolean;
+  shouldReconnect?: (event: WebSocketEventMap["close"]) => boolean;
   reconnectInterval?: number | ((lastAttemptNumber: number) => number);
   reconnectAttempts?: number;
-  filter?: (message: WebSocketEventMap['message']) => boolean;
+  filter?: (message: WebSocketEventMap["message"]) => boolean;
   retryOnError?: boolean;
-  onOpen?: (event: WebSocketEventMap['open']) => void;
-  onClose?: (event: WebSocketEventMap['close']) => void;
-  onMessage?: (event: WebSocketEventMap['message']) => void;
-  onError?: (event: WebSocketEventMap['error']) => void;
+  onOpen?: (event: WebSocketEventMap["open"]) => void;
+  onClose?: (event: WebSocketEventMap["close"]) => void;
+  onMessage?: (event: WebSocketEventMap["message"]) => void;
+  onError?: (event: WebSocketEventMap["error"]) => void;
   onReconnectStop?: (numAttempted: number) => void;
   fromSocketIO?: boolean;
   queryParams?: {
@@ -357,12 +362,14 @@ interface Options {
   };
   protocols?: string | string[];
   eventSourceOptions?: EventSourceInit;
-  heartbeat?: boolean | {
-    message?: "ping" | "pong" | string;
-    returnMessage?: "ping" | "pong" | string;
-    timeout?: number;
-    interval?: number;
-  };
+  heartbeat?:
+    | boolean
+    | {
+        message?: "ping" | "pong" | string;
+        returnMessage?: "ping" | "pong" | string;
+        timeout?: number;
+        interval?: number;
+      };
 }
 ```
 
@@ -413,11 +420,11 @@ SocketIO sends messages in a format that isn't JSON-parsable. One example is:
 An extension of this hook is available by importing `useSocketIO`:
 
 ```js
-import { useSocketIO } from 'react-use-websocket';
+import { useSocketIO } from "react-use-websocket";
 
 //Same API in component
 const { sendMessage, lastMessage, readyState } = useSocketIO(
-  'http://localhost:3000/'
+  "http://localhost:3000/"
 );
 ```
 
@@ -429,11 +436,11 @@ If the `heartbeat` option is set to `true` or has additional options, the librar
 
 ```js
 const { sendMessage, lastMessage, readyState } = useWebSocket(
-  'ws://localhost:3000',
+  "ws://localhost:3000",
   {
     heartbeat: {
-      message: 'ping',
-      returnMessage: 'pong',
+      message: "ping",
+      returnMessage: "pong",
       timeout: 60000, // 1 minute, if no response is received, the connection will be closed
       interval: 25000, // every 25 seconds, a ping message will be sent
     },
@@ -445,8 +452,7 @@ const { sendMessage, lastMessage, readyState } = useWebSocket(
 
 If a function is provided with the key `filter`, incoming messages will be passed through the function, and only if it returns `true` will the hook pass along the `lastMessage` and update your component.
 
-
-Example: 
+Example:
 
 ```js
   filter: (message) => {
@@ -466,11 +472,11 @@ The component will rerender every time the WebSocket receives a message that doe
 ## useEventSource
 
 ```js
-import { useEventSource } from 'react-use-websocket';
+import { useEventSource } from "react-use-websocket";
 
 //Only the following three properties are provided
 const { lastEvent, getEventSource, readyState } = useEventSource(
-  'http://localhost:3000/',
+  "http://localhost:3000/",
   {
     withCredentials: true,
     events: {
@@ -500,14 +506,14 @@ There are some cases when the global state of the library won't reset with the p
 To avoid troubles with the new initialization of components related to the same URL, you can reset the global state for a specific connection based on your own logic.
 
 ```js
-import React, { useEffect } from 'react';
-import { resetGlobalState } from 'react-use-websocket';
+import React, { useEffect } from "react";
+import { resetGlobalState } from "react-use-websocket";
 
 // insside second window opened via window.open
 export const ChildWindow = () => {
   useEffect(() => {
-    window.addEventListener('unload', () => {
-      resetGlobalState('wss://echo.websocket.org');
+    window.addEventListener("unload", () => {
+      resetGlobalState("wss://echo.websocket.org");
     });
   }, []);
 };
