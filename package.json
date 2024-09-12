@@ -1,5 +1,5 @@
 {
-  "name": "react-use-websocket",
+  "name": "@meet1707/react-use-websocket",
   "version": "4.8.1",
   "description": "React Hook for WebSocket communication",
   "main": "./dist/index.js",
@@ -15,9 +15,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robtaussig/react-use-websocket.git"
+    "url": "git+https://github.com/Meet1707/react-use-websocket.git"
   },
-  "dependencies": {},
   "types": "./dist/index.d.ts",
   "peerDependencies": {
     "react": ">= 18.0.0",
